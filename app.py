@@ -31,11 +31,11 @@ def SA_result():
     r = tb.TextBlob(q).sentiment
     return(render_template("SA_result.html", r=r))
 
-@app.route("/SA", methods=["GET", "POST"])
+@app.route("/genAI", methods=["GET", "POST"])
 def genAI():
     return(render_template("genAI.html"))
 
-@app.route("/SA_result", methods=["GET", "POST"])
+@app.route("/genAI_result", methods=["GET", "POST"])
 def genAI_result():
     q = request.form.get("q")
     r = model.generate_content(q)

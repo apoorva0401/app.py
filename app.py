@@ -1,16 +1,46 @@
-from flask import Flask
+from flask import Flask # type: ignore
 from flask import render_template,request
+import textblob as tb
+import google.generativeai as genai
+import os
+
+
+#api = "AIzaSyCFIL-2qRWHrUqzyf_TN3A5IKQsVgB2zHg"
+api = os.getenv("makersuite")
+genai.configure(api_key=api)
+model = genai.GenerativeModel("gemini-1.5-flash")
 
 app = Flask("_name_")
 
-@app.route("/",methods=["GET","POST"])
+@app.route("/", methods=["GET", "POST"])
 def index():
     return(render_template("index.html"))
 
-@app.route("/main",methods=["GET","POST"])
+@app.route("/main", methods=["GET", "POST"])
 def main():
     name = request.form.get("q")
     return(render_template("main.html"))
 
-if __name__== "__main__":
+@app.route("/SA", methods=["GET", "POST"])
+def SA():
+    return(render_template("SA.html"))
+
+@app.route("/SA_result", methods=["GET", "POST"])
+def SA_result():
+    q = request.form.get("q")
+    r = tb.TextBlob(q).sentiment
+    return(render_template("SA_result.html", r=r))
+
+@app.route("/SA", methods=["GET", "POST"])
+def genAI():
+    return(render_template("genAI.html"))
+
+@app.route("/SA_result", methods=["GET", "POST"])
+def genAI_result():
+    q = request.form.get("q")
+    r = model.generate_content(q)
+    return(render_template("genAI_result.html", r=r.candidates[0].content.parts[0].text))
+
+
+if __name__ == "__main__":
     app.run()
